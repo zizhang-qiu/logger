@@ -3,7 +3,6 @@
 #include <iomanip>
 #include "file.h"
 
-
 class Logger {
  public:
   virtual ~Logger() = default;
@@ -14,6 +13,23 @@ class Logger {
     std::ostringstream oss;
     StrFormat(oss, format, value, args...);
     Print(oss.str());
+  }
+
+ private:
+  template <typename T, typename... Args>
+  void StrFormat(std::ostringstream& oss, const std::string& format, T value,
+                 Args... args) {
+    size_t pos = format.find("{}");
+    if (pos != std::string::npos) {
+      oss << format.substr(0, pos) << value;
+      StrFormat(oss, format.substr(pos + 2), args...);
+    } else {
+      oss << format;
+    }
+  }
+
+  void StrFormat(std::ostringstream& oss, const std::string& format) {
+    oss << format;
   }
 };
 
